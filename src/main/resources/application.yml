@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: movies-battle
+  profiles:
+    active: local
+  cloud:
+    discovery:
+      client:
+        composite-indicator:
+          enabled: false
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  jackson:
+    default-property-inclusion: non_empty
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    mapper:
+      ACCEPT_CASE_INSENSITIVE_PROPERTIES: true
+    parser:
+      ALLOW_COMMENTS: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+info:
+  build:
+    name: '@project.name@'
+  app:
+    encoding: @project.build.sourceEncoding@
+    java:
+      source: @java.version@
+      target: @java.version@
+
+management:
+  info.git.mode: simple
+  endpoints:
+    web:
+      exposure:
+        include: info,health
+  endpoint:
+    health:
+      show-details: never
+
+server:
+  shutdown: graceful
