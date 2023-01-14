@@ -2,6 +2,7 @@ package br.com.danielwisky.moviesbattle.gateways.outputs.h2.entities;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import br.com.danielwisky.moviesbattle.domains.Movie;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class MovieEntity implements Serializable {
   @GeneratedValue(strategy = IDENTITY)
   @Column(nullable = false)
   private Long id;
-  @Column(nullable = false)
+  @Column(nullable = false, length = 100)
   private String title;
   @Column(name = "release_year")
   private Integer year;
@@ -32,4 +33,22 @@ public class MovieEntity implements Serializable {
   private Float rate;
   @Column(name = "last_modified_date")
   private LocalDateTime lastModifiedDate;
+
+  public MovieEntity(final Movie movie) {
+    this.id = movie.getId();
+    this.title = movie.getTitle();
+    this.year = movie.getYear();
+    this.rate = movie.getRate();
+    this.lastModifiedDate = movie.getLastModifiedDate();
+  }
+
+  public Movie toDomain() {
+    return Movie.builder()
+        .id(this.id)
+        .title(this.title)
+        .year(this.year)
+        .rate(this.rate)
+        .lastModifiedDate(this.lastModifiedDate)
+        .build();
+  }
 }
