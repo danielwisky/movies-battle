@@ -26,13 +26,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CustomExceptionHandler {
 
   @ExceptionHandler(ResourceNotFoundException.class)
-  public HttpEntity<ErrorResponse> handlerResourceNotFoundException(final ResourceNotFoundException ex) {
+  public HttpEntity<ErrorResponse> handlerResourceNotFoundException(
+      final ResourceNotFoundException ex) {
     log.debug(ex.getMessage(), ex);
     return new ResponseEntity<>(createResponse(ex), buildHttpHeader(), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler({MethodArgumentNotValidException.class})
-  public HttpEntity<ErrorResponse> handlerMethodArgumentNotValidException(final MethodArgumentNotValidException ex) {
+  public HttpEntity<ErrorResponse> handlerMethodArgumentNotValidException(
+      final MethodArgumentNotValidException ex) {
     log.debug(ex.getMessage(), ex);
     final var bindingResult = ex.getBindingResult();
     final var fieldErrors = bindingResult.getFieldErrors();

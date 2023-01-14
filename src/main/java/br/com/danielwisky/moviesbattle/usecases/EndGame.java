@@ -23,7 +23,7 @@ public class EndGame {
         .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
 
     validate(gameData);
-    
+
     gameData.setStatus(FINISHED);
     gameData.setLastModifiedDate(now());
     return gameDataGateway.save(gameData);
