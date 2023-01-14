@@ -1,4 +1,4 @@
-package br.com.danielwisky.moviesbattle.gateways.inputs.http.resources.response;
+package br.com.danielwisky.moviesbattle.gateways.inputs.http.resources;
 
 import static java.util.Optional.ofNullable;
 

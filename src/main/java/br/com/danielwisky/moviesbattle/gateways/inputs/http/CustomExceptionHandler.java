@@ -1,4 +1,4 @@
-package br.com.danielwisky.moviesbattle.gateways.inputs.http.resources;
+package br.com.danielwisky.moviesbattle.gateways.inputs.http;
 
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -8,7 +8,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import br.com.danielwisky.moviesbattle.domains.exceptions.BusinessValidationException;
 import br.com.danielwisky.moviesbattle.domains.exceptions.ResourceNotFoundException;
-import br.com.danielwisky.moviesbattle.gateways.inputs.http.resources.response.ErrorResponse;
+import br.com.danielwisky.moviesbattle.gateways.inputs.http.resources.ErrorResponse;
 import java.util.List;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

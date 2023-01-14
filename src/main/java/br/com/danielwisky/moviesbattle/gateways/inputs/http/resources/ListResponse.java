@@ -1,4 +1,4 @@
-package br.com.danielwisky.moviesbattle.gateways.inputs.http.resources.response;
+package br.com.danielwisky.moviesbattle.gateways.inputs.http.resources;
 
 import java.io.Serial;
 import java.io.Serializable;

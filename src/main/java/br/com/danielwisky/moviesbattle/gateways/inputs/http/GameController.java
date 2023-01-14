@@ -5,8 +5,8 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 import br.com.danielwisky.moviesbattle.domains.User;
-import br.com.danielwisky.moviesbattle.gateways.inputs.http.resources.response.GameResponse;
-import br.com.danielwisky.moviesbattle.gateways.inputs.http.resources.response.ListResponse;
+import br.com.danielwisky.moviesbattle.gateways.inputs.http.resources.GameResponse;
+import br.com.danielwisky.moviesbattle.gateways.inputs.http.resources.ListResponse;
 import br.com.danielwisky.moviesbattle.usecases.CreateGame;
 import br.com.danielwisky.moviesbattle.usecases.EndGame;
 import br.com.danielwisky.moviesbattle.usecases.FindGame;
@@ -53,6 +53,7 @@ public class GameController {
   @PreAuthorize("hasRole('ROLE_USER')")
   public GameResponse create(final Authentication authentication) {
     final var user = (User) authentication.getPrincipal();
+    log.debug("create game with user: {}", user.getUsername());
     return new GameResponse(createGame.execute(user));
   }
 
@@ -67,6 +68,7 @@ public class GameController {
   @PreAuthorize("hasRole('ROLE_USER')")
   public GameResponse start(@PathVariable final Long id, final Authentication authentication) {
     final var user = (User) authentication.getPrincipal();
+    log.debug("start game with id: {} and user: {}", id, user.getUsername());
     return new GameResponse(startGame.execute(id, user));
   }
 
@@ -81,6 +83,7 @@ public class GameController {
   @PreAuthorize("hasRole('ROLE_USER')")
   public GameResponse end(@PathVariable final Long id, final Authentication authentication) {
     final var user = (User) authentication.getPrincipal();
+    log.debug("end game with id: {} and user: {}", id, user.getUsername());
     return new GameResponse(endGame.execute(id, user));
   }
 

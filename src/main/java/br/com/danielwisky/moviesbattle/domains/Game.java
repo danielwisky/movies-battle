@@ -4,7 +4,6 @@ import br.com.danielwisky.moviesbattle.domains.enums.GameStatus;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +20,6 @@ public class Game implements Serializable {
 
   private Long id;
   private User user;
-  private List<Quiz> quizzes;
   private GameStatus status;
   private LocalDateTime lastModifiedDate;
 }
