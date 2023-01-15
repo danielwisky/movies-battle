@@ -57,6 +57,7 @@ Para rodar os testes, rode o seguinte comando
 
 - [Swagger](http://localhost:8080/swagger-ui.html)
 - [API Docs](http://localhost:8080/v3/api-docs)
+- [H2 Console](http://localhost:8080/h2-console/)
 
 ## Autores
 
