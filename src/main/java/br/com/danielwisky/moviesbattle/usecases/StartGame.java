@@ -29,7 +29,7 @@ public class StartGame {
     gameData.setLastModifiedDate(now());
 
     final var gameStarted = gameDataGateway.save(gameData);
-    createQuiz.execute(gameStarted);
+    createQuiz.execute(gameStarted, user);
     return gameStarted;
   }
 

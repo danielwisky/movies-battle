@@ -5,6 +5,7 @@ import static br.com.danielwisky.moviesbattle.domains.enums.Answer.MOVIE_TWO;
 import static br.com.danielwisky.moviesbattle.domains.enums.GameStatus.STARTED;
 import static br.com.danielwisky.moviesbattle.domains.enums.QuizStatus.CORRECT;
 import static br.com.danielwisky.moviesbattle.domains.enums.QuizStatus.INCORRECT;
+import static br.com.danielwisky.moviesbattle.domains.enums.QuizStatus.NOT_ANSWERED;
 import static java.time.LocalDateTime.now;
 
 import br.com.danielwisky.moviesbattle.domains.Game;
@@ -37,6 +38,7 @@ public class AnswerQuiz {
 
     final var quizData = quizDataGateway.findByIdAndGame(quizId, gameData)
         .orElseThrow(() -> new ResourceNotFoundException("Quiz não encontrado."));
+    validateNotAnsweredQuiz(quizData);
 
     final var isCorrect = isCorrect(answer, quizData.getMovieOne(), quizData.getMovieTwo());
     quizData.setStatus(isCorrect ? CORRECT : INCORRECT);
@@ -54,13 +56,19 @@ public class AnswerQuiz {
     if (totalIncorrectAnswers >= LONG_THREE) {
       endGame.execute(game.getId(), user);
     } else {
-      createQuiz.execute(game);
+      createQuiz.execute(game, user);
     }
   }
 
   private boolean isCorrect(final Answer answer, final Movie movieOne, final Movie movieTwo) {
     return (MOVIE_ONE.equals(answer) && movieOne.isBetterRatedThan(movieTwo))
         || (MOVIE_TWO.equals(answer) && movieTwo.isBetterRatedThan(movieOne));
+  }
+
+  private void validateNotAnsweredQuiz(final Quiz quiz) {
+    if (!NOT_ANSWERED.equals(quiz.getStatus())) {
+      throw new BusinessValidationException("Quiz já respondido.");
+    }
   }
 
   private void validateStartedGame(final Game game) {

@@ -1,8 +1,5 @@
 package br.com.danielwisky.moviesbattle.domains;
 
-import static br.com.danielwisky.moviesbattle.domains.enums.QuizStatus.CORRECT;
-
-import br.com.danielwisky.moviesbattle.domains.enums.QuizStatus;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,19 +12,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Quiz implements Serializable {
+public class Ranking implements Serializable {
 
   @Serial
   private static final long serialVersionUID = 1L;
 
   private Long id;
-  private QuizStatus status;
   private Game game;
-  private Movie movieOne;
-  private Movie movieTwo;
+  private User user;
+  private Double score;
   private LocalDateTime lastModifiedDate;
-
-  public boolean isCorrect() {
-    return CORRECT.equals(this.status);
-  }
 }

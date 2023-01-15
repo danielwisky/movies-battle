@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class EndGame {
 
   private final GameDataGateway gameDataGateway;
+  private final CreateRanking createRanking;
 
   public Game execute(final Long id, final User user) {
     final var gameData = gameDataGateway.findByIdAndUser(id, user)
@@ -26,7 +27,10 @@ public class EndGame {
 
     gameData.setStatus(FINISHED);
     gameData.setLastModifiedDate(now());
-    return gameDataGateway.save(gameData);
+
+    final var gameSaved = gameDataGateway.save(gameData);
+    createRanking.execute(gameSaved, user);
+    return gameSaved;
   }
 
   private void validate(final Game game) {

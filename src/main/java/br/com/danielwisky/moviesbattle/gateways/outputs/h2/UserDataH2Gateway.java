@@ -20,7 +20,6 @@ public class UserDataH2Gateway implements UserDataGateway {
   public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
     return userEntityRepository.findByUsername(username)
         .map(UserEntity::toDomain)
-        .orElseThrow(() -> new UsernameNotFoundException(
-            format("User not found with username: %s", username)));
+        .orElseThrow(() -> new UsernameNotFoundException(format("User not found with username: %s", username)));
   }
 }

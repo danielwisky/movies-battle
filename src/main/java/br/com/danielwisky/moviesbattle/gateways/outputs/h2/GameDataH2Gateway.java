@@ -5,6 +5,7 @@ import br.com.danielwisky.moviesbattle.domains.User;
 import br.com.danielwisky.moviesbattle.domains.enums.GameStatus;
 import br.com.danielwisky.moviesbattle.gateways.outputs.GameDataGateway;
 import br.com.danielwisky.moviesbattle.gateways.outputs.h2.entities.GameEntity;
+import br.com.danielwisky.moviesbattle.gateways.outputs.h2.entities.UserEntity;
 import br.com.danielwisky.moviesbattle.gateways.outputs.h2.repositories.GameEntityRepository;
 import java.util.List;
 import java.util.Optional;
@@ -26,17 +27,16 @@ public class GameDataH2Gateway implements GameDataGateway {
 
   @Override
   public Optional<Game> findByIdAndUser(final Long id, final User user) {
-    return repository.findByIdAndUserId(id, user.getId()).map(GameEntity::toDomain);
+    return repository.findByIdAndUser(id, new UserEntity(user)).map(GameEntity::toDomain);
   }
 
   @Override
   public Page<Game> findAll(final User user, final Pageable pageable) {
-    return repository.findAllByUserId(user.getId(), pageable).map(GameEntity::toDomain);
+    return repository.findAllByUser(new UserEntity(user), pageable).map(GameEntity::toDomain);
   }
 
   @Override
   public boolean existsByUserAndStatusIn(final User user, final List<GameStatus> statuses) {
-    return repository.existsByUserIdAndStatusIn(
-        user.getId(), statuses.stream().map(Enum::name).toList());
+    return repository.existsByUserAndStatusIn(new UserEntity(user), statuses.stream().map(Enum::name).toList());
   }
 }
