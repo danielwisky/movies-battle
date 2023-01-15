@@ -25,4 +25,14 @@ public class QuizDataH2Gateway implements QuizDataGateway {
   public Optional<Quiz> findByGameAndStatus(final Game game, final QuizStatus status) {
     return repository.findByGameIdAndStatus(game.getId(), status.name()).map(QuizEntity::toDomain);
   }
+
+  @Override
+  public Optional<Quiz> findByIdAndGame(final Long id, final Game game) {
+    return repository.findByIdAndGameId(id, game.getId()).map(QuizEntity::toDomain);
+  }
+
+  @Override
+  public long countByGameAndStatus(final Game game, final QuizStatus status) {
+    return repository.countByGameIdAndStatus(game.getId(), status.name());
+  }
 }

@@ -23,13 +23,13 @@ public class FindActualQuiz {
   public Quiz execute(final Long gameId, final User user) {
     final var gameData = gameDataGateway.findByIdAndUser(gameId, user)
         .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
-    validateGameStarted(gameData);
+    validateStartedGame(gameData);
 
     return quizDataGateway.findByGameAndStatus(gameData, NOT_ANSWERED)
         .orElseThrow(() -> new ResourceNotFoundException("Quiz atual não encontrado."));
   }
 
-  private void validateGameStarted(final Game game) {
+  private void validateStartedGame(final Game game) {
     if (!STARTED.equals(game.getStatus())) {
       throw new BusinessValidationException("O jogo não está iniciado.");
     }

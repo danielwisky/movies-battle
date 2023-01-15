@@ -9,5 +9,9 @@ public interface QuizDataGateway {
 
   Quiz save(Quiz quiz);
 
-  Optional<Quiz> findByGameAndStatus(Game gameData, QuizStatus status);
+  Optional<Quiz> findByGameAndStatus(Game game, QuizStatus status);
+
+  Optional<Quiz> findByIdAndGame(Long id, Game game);
+
+  long countByGameAndStatus(Game game, QuizStatus status);
 }

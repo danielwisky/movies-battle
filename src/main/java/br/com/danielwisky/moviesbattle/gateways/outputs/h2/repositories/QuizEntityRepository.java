@@ -7,4 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 public interface QuizEntityRepository extends CrudRepository<QuizEntity, Long> {
 
   Optional<QuizEntity> findByGameIdAndStatus(Long id, String status);
+
+  Optional<QuizEntity> findByIdAndGameId(Long id, Long gameId);
+
+  long countByGameIdAndStatus(Long id, String status);
 }

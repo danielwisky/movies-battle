@@ -22,4 +22,8 @@ public class Movie implements Serializable {
   private Integer year;
   private Float rate;
   private LocalDateTime lastModifiedDate;
+
+  public boolean isBetterRatedThan(final Movie anotherMovie) {
+    return this.rate >= anotherMovie.getRate();
+  }
 }
