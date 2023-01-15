@@ -20,6 +20,8 @@
     <java.version>17</java.version>
     <springdoc.version>1.6.14</springdoc.version>
     <commons-collections4.version>4.4</commons-collections4.version>
+    <pitest-plugin.version>1.9.11</pitest-plugin.version>
+    <jacoco-plugin.version>0.8.8</jacoco-plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -102,7 +104,80 @@
           </excludes>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>${pitest-plugin.version}</version>
+        <configuration>
+          <targetClasses>
+            <param>**.usecases.**</param>
+          </targetClasses>
+          <targetTests>
+            <param>**.usecases.**</param>
+          </targetTests>
+          <failWhenNoMutations>false</failWhenNoMutations>
+          <mutationThreshold>0</mutationThreshold>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-site</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <rule>
+                  <element>CLASS</element>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>1.00</minimum>
+                    </limit>
+                  </limits>
+                  <excludes>
+                    <!-- COMMON COVERAGE EXCLUSIONS -->
+                    <exclude>**.configurations.**</exclude>
+                    <exclude>**.entities.**</exclude>
+                    <exclude>**.domains.**</exclude>
+                    <exclude>**.resources.**</exclude>
+
+                    <exclude>br.com.danielwisky.moviesbattle.gateways.inputs.http.CustomExceptionHandler</exclude>
+                    <exclude>br.com.danielwisky.moviesbattle.Application</exclude>
+                  </excludes>
+                </rule>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
 </project>
