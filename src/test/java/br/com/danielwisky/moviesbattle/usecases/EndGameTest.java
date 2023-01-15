@@ -1,6 +1,6 @@
 package br.com.danielwisky.moviesbattle.usecases;
 
-import static br.com.danielwisky.moviesbattle.domains.enums.GameStatus.STARTED;
+import static br.com.danielwisky.moviesbattle.domains.enums.GameStatus.FINISHED;
 import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,17 +23,17 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-@DisplayName("StartGame Test Case")
-class StartGameTest extends UnitTest {
+@DisplayName("EndGame Test Case")
+class EndGameTest extends UnitTest {
 
   @InjectMocks
-  private StartGame startGame;
+  private EndGame endGame;
 
   @Mock
   private GameDataGateway gameDataGateway;
 
   @Mock
-  private CreateQuiz createQuiz;
+  private CreateRanking createRanking;
 
   @Captor
   private ArgumentCaptor<Game> gameArgumentCaptor;
@@ -41,34 +41,34 @@ class StartGameTest extends UnitTest {
   @Test
   @DisplayName("should execute")
   void shouldExecute() {
-    final var game = GameTemplate.validStartPending();
+    final var game = GameTemplate.validStarted();
     final var gameId = game.getId();
     final var user = UserTemplate.validUser();
 
     when(gameDataGateway.findByIdAndUser(gameId, user)).thenReturn(Optional.of(game));
     when(gameDataGateway.save(game)).thenReturn(game);
 
-    startGame.execute(gameId, user);
+    endGame.execute(gameId, user);
 
-    verify(createQuiz).execute(game, user);
+    verify(createRanking).execute(game, user);
     verify(gameDataGateway).save(gameArgumentCaptor.capture());
 
     final var gameCaptured = gameArgumentCaptor.getValue();
 
     assertNotNull(gameCaptured);
-    assertEquals(STARTED, gameCaptured.getStatus());
+    assertEquals(FINISHED, gameCaptured.getStatus());
   }
 
   @Test
   @DisplayName("should throw exception when game not found")
   void shouldThrowExceptionWhenGameNotFound() {
-    final var game = GameTemplate.validFinished();
+    final var game = GameTemplate.validStarted();
     final var gameId = game.getId();
     final var user = UserTemplate.validUser();
 
     when(gameDataGateway.findByIdAndUser(gameId, user)).thenReturn(empty());
 
-    assertThrows(ResourceNotFoundException.class, () -> startGame.execute(gameId, user));
+    assertThrows(ResourceNotFoundException.class, () -> endGame.execute(gameId, user));
   }
 
   @Test
@@ -80,6 +80,6 @@ class StartGameTest extends UnitTest {
 
     when(gameDataGateway.findByIdAndUser(gameId, user)).thenReturn(Optional.of(game));
 
-    assertThrows(BusinessValidationException.class, () -> startGame.execute(gameId, user));
+    assertThrows(BusinessValidationException.class, () -> endGame.execute(gameId, user));
   }
 }

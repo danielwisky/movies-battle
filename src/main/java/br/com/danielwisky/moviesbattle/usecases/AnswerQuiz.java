@@ -45,9 +45,7 @@ public class AnswerQuiz {
     quizData.setLastModifiedDate(now());
 
     final var quizUpdated = quizDataGateway.save(quizData);
-
     validateAttempts(gameData, user);
-
     return quizUpdated;
   }
 

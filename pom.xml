@@ -168,6 +168,7 @@
                     <exclude>**.entities.**</exclude>
                     <exclude>**.domains.**</exclude>
                     <exclude>**.resources.**</exclude>
+                    <exclude>**.gateways.**</exclude>
 
                     <exclude>br.com.danielwisky.moviesbattle.gateways.inputs.http.CustomExceptionHandler</exclude>
                     <exclude>br.com.danielwisky.moviesbattle.Application</exclude>

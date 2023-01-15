@@ -19,6 +19,16 @@ public class QuizTemplate {
         .build();
   }
 
+  public static Quiz validNotAnsweredWhenMovieOneIsCorrect() {
+    return Quiz.builder()
+        .id(1L)
+        .movieOne(MovieTemplate.validMovieOne())
+        .movieTwo(MovieTemplate.validMovieTwo())
+        .status(NOT_ANSWERED)
+        .lastModifiedDate(now())
+        .build();
+  }
+
   public static Quiz validCorrect() {
     return Quiz.builder()
         .id(2L)
