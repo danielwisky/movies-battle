@@ -59,8 +59,7 @@ public class CreateQuiz {
     quizDataGateway.save(newQuiz);
   }
 
-  private boolean existsByGameAndMovies(final Game game, final Movie movieOne,
-      final Movie movieTwo) {
+  private boolean existsByGameAndMovies(final Game game, final Movie movieOne, final Movie movieTwo) {
     return quizDataGateway.existsByGameAndMovies(game, movieOne, movieTwo);
   }
 }

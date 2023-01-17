@@ -25,10 +25,6 @@ public class CreateRanking {
   private final QuizDataGateway quizDataGateway;
   private final RankingDataGateway rankingDataGateway;
 
-  private static double calculatePercentage(final long total, final long totalCorrect) {
-    return BigDecimal.valueOf(totalCorrect * 100.0f / total).setScale(2, FLOOR).doubleValue();
-  }
-
   public void execute(final Game game, final User user) {
     final var quizzes = quizDataGateway.findAllByGameAndStatusIn(game, List.of(CORRECT, INCORRECT));
     final var total = quizzes.stream().count();
@@ -43,5 +39,9 @@ public class CreateRanking {
         .lastModifiedDate(now())
         .build();
     rankingDataGateway.save(newRanking);
+  }
+  
+  private static double calculatePercentage(final long total, final long totalCorrect) {
+    return BigDecimal.valueOf(totalCorrect * 100.0f / total).setScale(2, FLOOR).doubleValue();
   }
 }
