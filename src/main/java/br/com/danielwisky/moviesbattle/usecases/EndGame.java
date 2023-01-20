@@ -10,8 +10,10 @@ import br.com.danielwisky.moviesbattle.domains.exceptions.BusinessValidationExce
 import br.com.danielwisky.moviesbattle.domains.exceptions.ResourceNotFoundException;
 import br.com.danielwisky.moviesbattle.gateways.outputs.GameDataGateway;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class EndGame {
@@ -20,21 +22,25 @@ public class EndGame {
   private final CreateRanking createRanking;
 
   public Game execute(final Long id, final User user) {
-    final var gameData = gameDataGateway.findByIdAndUser(id, user)
-        .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
+    final var game = findGame(id, user);
+    validateStartedGame(game);
 
-    validate(gameData);
+    game.setStatus(FINISHED);
+    game.setLastModifiedDate(now());
 
-    gameData.setStatus(FINISHED);
-    gameData.setLastModifiedDate(now());
-
-    final var gameSaved = gameDataGateway.save(gameData);
+    final var gameSaved = gameDataGateway.save(game);
     createRanking.execute(gameSaved, user);
     return gameSaved;
   }
 
-  private void validate(final Game game) {
+  private Game findGame(Long id, User user) {
+    return gameDataGateway.findByIdAndUser(id, user)
+        .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
+  }
+
+  private void validateStartedGame(final Game game) {
     if (!STARTED.equals(game.getStatus())) {
+      log.error("Game {} is not started and cannot be ended.", game.getId());
       throw new BusinessValidationException("O jogo não pode ser finalizado.");
     }
   }

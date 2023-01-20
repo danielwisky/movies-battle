@@ -31,7 +31,7 @@ class FindGamesTest extends UnitTest {
     final var user = UserTemplate.validUser();
     final var games = List.of(GameTemplate.validStartPending());
 
-    when(gameDataGateway.findAll(user, pageable)).thenReturn(new PageImpl<>(games));
+    when(gameDataGateway.findAllByUser(user, pageable)).thenReturn(new PageImpl<>(games));
 
     final var result = findGames.execute(user, pageable);
     assertNotNull(result);

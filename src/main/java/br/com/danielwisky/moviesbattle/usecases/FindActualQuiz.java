@@ -20,13 +20,28 @@ public class FindActualQuiz {
   private final GameDataGateway gameDataGateway;
   private final QuizDataGateway quizDataGateway;
 
+  /**
+   * Finds the current quiz for the provided game and user.
+   *
+   * @param gameId the id of the game for which the current quiz is being searched
+   * @param user   the user for which the current quiz is being searched
+   * @return the current quiz for the provided game and user
+   */
   public Quiz execute(final Long gameId, final User user) {
-    final var gameData = gameDataGateway.findByIdAndUser(gameId, user)
-        .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
-    validateStartedGame(gameData);
+    final var game = findGame(gameId, user);
+    validateStartedGame(game);
 
-    return quizDataGateway.findByGameAndStatus(gameData, NOT_ANSWERED)
+    return findActualQuiz(game);
+  }
+
+  private Quiz findActualQuiz(final Game game) {
+    return quizDataGateway.findByGameAndStatus(game, NOT_ANSWERED)
         .orElseThrow(() -> new ResourceNotFoundException("Quiz atual não encontrado."));
+  }
+
+  private Game findGame(Long gameId, User user) {
+    return gameDataGateway.findByIdAndUser(gameId, user)
+        .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
   }
 
   private void validateStartedGame(final Game game) {

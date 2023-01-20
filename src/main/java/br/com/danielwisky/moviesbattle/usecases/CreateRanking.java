@@ -25,6 +25,12 @@ public class CreateRanking {
   private final QuizDataGateway quizDataGateway;
   private final RankingDataGateway rankingDataGateway;
 
+  /**
+   * Creates a new ranking for the provided game and user.
+   *
+   * @param game the game for which the ranking is being created
+   * @param user the user for which the ranking is being created
+   */
   public void execute(final Game game, final User user) {
     final var quizzes = quizDataGateway.findAllByGameAndStatusIn(game, List.of(CORRECT, INCORRECT));
     final var total = quizzes.stream().count();
@@ -40,7 +46,14 @@ public class CreateRanking {
         .build();
     rankingDataGateway.save(newRanking);
   }
-  
+
+  /**
+   * Calculates the percentage of correct answers.
+   *
+   * @param total        the total number of quizzes
+   * @param totalCorrect the total number of correct answers
+   * @return the percentage of correct answers
+   */
   private static double calculatePercentage(final long total, final long totalCorrect) {
     return BigDecimal.valueOf(totalCorrect * 100.0f / total).setScale(2, FLOOR).doubleValue();
   }

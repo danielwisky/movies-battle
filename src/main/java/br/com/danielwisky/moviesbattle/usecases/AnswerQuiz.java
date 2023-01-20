@@ -9,7 +9,6 @@ import static br.com.danielwisky.moviesbattle.domains.enums.QuizStatus.NOT_ANSWE
 import static java.time.LocalDateTime.now;
 
 import br.com.danielwisky.moviesbattle.domains.Game;
-import br.com.danielwisky.moviesbattle.domains.Movie;
 import br.com.danielwisky.moviesbattle.domains.Quiz;
 import br.com.danielwisky.moviesbattle.domains.User;
 import br.com.danielwisky.moviesbattle.domains.enums.Answer;
@@ -24,43 +23,59 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AnswerQuiz {
 
-  private static final long LONG_THREE = 3;
+  private static final long MAX_INCORRECT_ANSWERS = 3;
 
   private final GameDataGateway gameDataGateway;
   private final QuizDataGateway quizDataGateway;
   private final CreateQuiz createQuiz;
   private final EndGame endGame;
 
+  /**
+   * Answers the quiz with the provided answer.
+   *
+   * @param gameId the id of the game to which the quiz belongs
+   * @param quizId the id of the quiz being answered
+   * @param answer the answer provided by the user
+   * @param user   the user who is answering the quiz
+   * @return the quiz with the updated answer and status
+   */
   public Quiz execute(final Long gameId, final Long quizId, final Answer answer, final User user) {
-    final var gameData = gameDataGateway.findByIdAndUser(gameId, user)
-        .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
-    validateStartedGame(gameData);
+    final var game = findGame(gameId, user);
+    validateStartedGame(game);
+    final var quiz = findQuiz(quizId, game);
+    validateNotAnsweredQuiz(quiz);
 
-    final var quizData = quizDataGateway.findByIdAndGame(quizId, gameData)
-        .orElseThrow(() -> new ResourceNotFoundException("Quiz não encontrado."));
-    validateNotAnsweredQuiz(quizData);
+    final var isCorrect = isCorrectAnswer(answer, quiz);
+    quiz.setStatus(isCorrect ? CORRECT : INCORRECT);
+    quiz.setLastModifiedDate(now());
 
-    final var isCorrect = isCorrect(answer, quizData.getMovieOne(), quizData.getMovieTwo());
-    quizData.setStatus(isCorrect ? CORRECT : INCORRECT);
-    quizData.setLastModifiedDate(now());
-
-    final var quizUpdated = quizDataGateway.save(quizData);
-    validateAttempts(gameData, user);
+    final var quizUpdated = quizDataGateway.save(quiz);
+    checkQuizAttempts(game, user);
     return quizUpdated;
   }
 
-  private void validateAttempts(final Game game, final User user) {
+  private Quiz findQuiz(final Long quizId, final Game game) {
+    return quizDataGateway.findByIdAndGame(quizId, game)
+        .orElseThrow(() -> new ResourceNotFoundException("Quiz não encontrado."));
+  }
+
+  private Game findGame(final Long gameId, final User user) {
+    return gameDataGateway.findByIdAndUser(gameId, user)
+        .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
+  }
+
+  private void checkQuizAttempts(final Game game, final User user) {
     final var totalIncorrectAnswers = quizDataGateway.countByGameAndStatus(game, INCORRECT);
-    if (totalIncorrectAnswers >= LONG_THREE) {
+    if (totalIncorrectAnswers >= MAX_INCORRECT_ANSWERS) {
       endGame.execute(game.getId(), user);
     } else {
       createQuiz.execute(game, user);
     }
   }
 
-  private boolean isCorrect(final Answer answer, final Movie movieOne, final Movie movieTwo) {
-    return (MOVIE_ONE.equals(answer) && movieOne.isBetterRatedThan(movieTwo))
-        || (MOVIE_TWO.equals(answer) && movieTwo.isBetterRatedThan(movieOne));
+  private boolean isCorrectAnswer(final Answer answer, final Quiz quiz) {
+    return (MOVIE_ONE.equals(answer) && quiz.getMovieOne().isBetterRatedThan(quiz.getMovieTwo()))
+        || (MOVIE_TWO.equals(answer) && quiz.getMovieTwo().isBetterRatedThan(quiz.getMovieOne()));
   }
 
   private void validateNotAnsweredQuiz(final Quiz quiz) {

@@ -19,21 +19,31 @@ public class StartGame {
   private final GameDataGateway gameDataGateway;
   private final CreateQuiz createQuiz;
 
+  /**
+   * Starts a game with the provided id for the provided user and creates a new quiz.
+   *
+   * @param id   the id of the game that is being started
+   * @param user the user for which the game is being started
+   * @return the started game
+   */
   public Game execute(final Long id, final User user) {
-    final var gameData = gameDataGateway.findByIdAndUser(id, user)
-        .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
+    final var game = findGame(id, user);
+    validateStartPending(game);
 
-    validate(gameData);
+    game.setStatus(STARTED);
+    game.setLastModifiedDate(now());
 
-    gameData.setStatus(STARTED);
-    gameData.setLastModifiedDate(now());
-
-    final var gameStarted = gameDataGateway.save(gameData);
+    final var gameStarted = gameDataGateway.save(game);
     createQuiz.execute(gameStarted, user);
     return gameStarted;
   }
 
-  private void validate(final Game game) {
+  private Game findGame(Long id, User user) {
+    return gameDataGateway.findByIdAndUser(id, user)
+        .orElseThrow(() -> new ResourceNotFoundException("Jogo não encontrado."));
+  }
+
+  private void validateStartPending(final Game game) {
     if (!START_PENDING.equals(game.getStatus())) {
       throw new BusinessValidationException("O jogo não pode ser iniciado.");
     }

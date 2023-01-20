@@ -13,6 +13,12 @@ public class FindRankings {
 
   private final RankingDataGateway rankingDataGateway;
 
+  /**
+   * Finds all rankings with pagination
+   *
+   * @param pageable the pagination information
+   * @return a page of found rankings
+   */
   public Page<Ranking> execute(final Pageable pageable) {
     return rankingDataGateway.findAll(pageable);
   }

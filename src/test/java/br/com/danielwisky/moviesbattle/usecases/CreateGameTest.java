@@ -2,7 +2,6 @@ package br.com.danielwisky.moviesbattle.usecases;
 
 import static br.com.danielwisky.moviesbattle.domains.enums.GameStatus.STARTED;
 import static br.com.danielwisky.moviesbattle.domains.enums.GameStatus.START_PENDING;
-import static java.util.List.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,6 +13,7 @@ import br.com.danielwisky.moviesbattle.domains.Game;
 import br.com.danielwisky.moviesbattle.domains.exceptions.BusinessValidationException;
 import br.com.danielwisky.moviesbattle.gateways.outputs.GameDataGateway;
 import br.com.danielwisky.moviesbattle.templates.domains.UserTemplate;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -38,8 +38,7 @@ class CreateGameTest extends UnitTest {
   void shouldExecute() {
     final var user = UserTemplate.validUser();
 
-    when(gameDataGateway.existsByUserAndStatusIn(user, of(START_PENDING, STARTED))).thenReturn(
-        false);
+    when(gameDataGateway.existsByUserAndStatusIn(user, Set.of(START_PENDING, STARTED))).thenReturn(false);
 
     createGame.execute(user);
 
@@ -55,7 +54,7 @@ class CreateGameTest extends UnitTest {
   @DisplayName("should throw exception when there is a game in progress")
   void shouldThrowExceptionWhenThereIsAGameInProgress() {
     final var user = UserTemplate.validUser();
-    when(gameDataGateway.existsByUserAndStatusIn(user, of(START_PENDING, STARTED))).thenReturn(
+    when(gameDataGateway.existsByUserAndStatusIn(user, Set.of(START_PENDING, STARTED))).thenReturn(
         true);
     assertThrows(BusinessValidationException.class, () -> createGame.execute(user));
   }

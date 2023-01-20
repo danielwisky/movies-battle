@@ -28,6 +28,15 @@ public class CreateQuiz {
   private final QuizDataGateway quizDataGateway;
   private final EndGame endGame;
 
+  /**
+   * Creates a new quiz with two randomly selected movies that haven't been used in a previous quiz
+   * for the provided game. If no valid movies are found after the maximum number of attempts, the
+   * end game process is triggered and an error message is returned.
+   *
+   * @param game the game for which the quiz is being created
+   * @param user the user for which the quiz is being created
+   * @return
+   */
   public void execute(final Game game, final User user) {
 
     Movie movieOne;
@@ -45,6 +54,7 @@ public class CreateQuiz {
 
     if (isNull(movieOne) || isNull(movieTwo) || !isValidMovies) {
       endGame.execute(game.getId(), user);
+      log.error("Failed to find new movies for game: {}", game.getId());
       throw new BusinessValidationException("Não foi possível encontrar novos filmes.");
     }
 
@@ -59,7 +69,8 @@ public class CreateQuiz {
     quizDataGateway.save(newQuiz);
   }
 
-  private boolean existsByGameAndMovies(final Game game, final Movie movieOne, final Movie movieTwo) {
+  private boolean existsByGameAndMovies(final Game game, final Movie movieOne,
+      final Movie movieTwo) {
     return quizDataGateway.existsByGameAndMovies(game, movieOne, movieTwo);
   }
 }
